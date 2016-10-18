@@ -1,0 +1,149 @@
+/*
+@font-face { font-family: Michroma; src: url('Michroma.ttf'); } 
+.j1, .j2, .j3, .j4
+{
+	min-height:100px;
+	min-width:200px;
+}
+.j1
+{
+	background-color:grey;
+}
+.j2
+{
+	background-color:red;
+}
+.j3
+{
+	background-color:yellow;
+}
+.j4
+{
+	background-color:green;
+}
+*/
+body
+{
+	
+	font-family:"Open Sans",sans-serif;
+}
+/*
+.commun
+{
+	color:red;
+}
+.inhabituel
+{
+	color:orange;
+}
+.rare
+{
+	color:green;
+}
+*/
+.vault
+{
+	/*color:yellow;*/
+	color: #c99037;
+}
+.titreOnglet
+{
+	text-align: center;
+}
+.cadreOptions
+{
+	margin: 0.5em;
+}
+.cadreRelique
+{
+	display: none;
+	flex-grow: 1;
+	border: 1px solid grey;
+	margin: 0.5em;
+	/*min-height:100px;*/
+	/* min-width:200px; */
+	background: white;
+	border: 2px solid red;
+}
+.joueur
+{
+	text-align: center;
+	font-weight: bold;
+	font-family:"Michroma","Open Sans",Helvetica,sans-serif;
+}
+.cadreSelRelique
+{
+	margin-left: 1em;
+	margin-right: 1em;
+}
+.selRelique
+{
+	width: 100%;
+	text-align: center;
+	background: black;
+	color: white;
+	margin-bottom: 1em;
+}	
+.tableButin
+{
+	display: none;
+	border-collapse: collapse;
+	width: 100%;
+	margin-bottom: 1em;
+}
+.tableButin, .tableButin tr, .tableButin td, .tableButin th
+{
+	border: 1px solid red;
+	white-space: nowrap;
+}
+.lignebutin
+{
+	cursor: pointer;
+}
+.lignebutin:hover
+{
+	color: red;
+}
+.tableInventaire
+{
+	border-collapse: collapse;
+	margin-left: auto;
+	margin-right: auto;
+}
+.tableInventaire, .tableInventaire tr, .tableInventaire td, .tableInventaire th
+{
+	border: 1px solid black;
+	white-space: nowrap;
+}
+.wfFont
+{
+	font-family:"Michroma","Open Sans",Helvetica,sans-serif;
+}
+.nmFont
+{
+	font-family:"Open Sans",sans-serif;
+}
+.colorWhite
+{
+	color: white;
+}
+.colorSilver
+{
+	color:	#a1a1a1;
+}
+.colorGold
+{
+	color: #c99037;
+}
+.bgSilver
+{
+	background-color: #a1a1a1;
+}
+.bgGold
+{
+	background-color: #c99037;
+}
+.textRight
+{
+	text-align: right;
+}
