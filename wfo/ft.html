@@ -17,9 +17,9 @@
 		<input type="button" id="btnFissure" class="btnOnglet" data-onglet="Fissure" value="Fissure" />
 		<input type="button" id="btnExcl" class="btnOnglet" data-onglet="Exclusions" value="Exclusions" disabled="disabled" />
 		<input type="button" id="btnInv" class="btnOnglet" data-onglet="Inventaire" value="Inventaire" />
-		<input type="button" id="btnRech" class="btnOnglet" data-onglet="Recherche" value="Recherche" disabled="disabled" />
+		<input type="button" id="btnRech" class="btnOnglet" data-onglet="Recherche" value="Recherche" />
 	</div>
-	<div class="main" id="main" style="flex-grow:1;height:2em;overflow:auto;">
+	<div class="main" id="main" style="flex-grow:1;height:2em;overflow:auto;position:relative;">
 		<div id="Fissure" class="onglet" style="display:none;">
 			<div id="optionsReliques" class="cadreOptions titreOnglet">
 				Ere: 
@@ -33,77 +33,97 @@
 				<span style="white-space:nowrap;margin-left:1em;"><input type="checkbox" id="chkExclusions" class="chkOptions" value="on" disabled="disabled" />Utiliser les exclusions</span>
 				<span style="white-space:nowrap;margin-left:1em;"><input type="checkbox" id="chkInventaire" class="chkOptions" value="on"/>Utiliser l&quot;inventaire</span>
 			</div>
-	<div id="reliques" style="display:flex;flex-direction:row;flex-wrap:wrap;">
-		<div id="reliqueJ1" class="j1 cadreRelique" style="">
-			<div class="joueur">Joueur 1</div>
-			<div class="cadreSelRelique">
-				<select id="selReliqueJ1" class="selRelique">
-					<option value=""></option>
-				</select>
-				<table id="butinJ1" class="tableButin">
-				</table>
+			<div id="reliques" style="display:flex;flex-direction:row;flex-wrap:wrap;">
+				<div id="reliqueJ1" class="j1 cadreRelique" style="">
+					<div class="joueur">Joueur 1</div>
+					<div class="cadreSelRelique">
+						<select id="selReliqueJ1" class="selRelique">
+							<option value=""></option>
+						</select>
+						<table id="butinJ1" class="tableButin">
+						</table>
+					</div>
+				</div>
+				<div id="reliqueJ2" class="j2 cadreRelique" style="">
+					<div class="joueur">Joueur 2</div>
+					<div class="cadreSelRelique">
+						<select id="selReliqueJ2" class="selRelique">
+							<option value=""></option>
+						</select>
+						<table id="butinJ2" class="tableButin">
+						</table>
+					</div>
+				</div>
+				<div id="reliqueJ3" class="j3 cadreRelique" style="">
+					<div class="joueur">Joueur 3</div>
+					<div class="cadreSelRelique">
+						<select id="selReliqueJ3" class="selRelique">
+							<option value=""></option>
+						</select>
+						<table id="butinJ3" class="tableButin">
+						</table>
+					</div>
+				</div>
+				<div id="reliqueJ4" class="j4 cadreRelique" style="">
+					<div class="joueur">Joueur 4</div>
+					<div class="cadreSelRelique">
+						<select id="sFelReliqueJ4" class="selRelique">
+							<option value=""></option>
+						</select>
+						<table id="butinJ4" class="tableButin">
+						</table>
+					</div>
+				</div>
+			</div>
+			<div id="choixButin" style="display:none;" class="cadreOptions titreOnglet">
+				Voulez vous ajouter <span id="nomButin" class="wfFont" style="font-weight:bold;"></span> a l'inventaire ? <input type="button" id="addButin" value="Ajouter"/>
 			</div>
 		</div>
-		<div id="reliqueJ2" class="j2 cadreRelique" style="">
-			<div class="joueur">Joueur 2</div>
-			<div class="cadreSelRelique">
-				<select id="selReliqueJ2" class="selRelique">
-					<option value=""></option>
-				</select>
-				<table id="butinJ2" class="tableButin">
-				</table>
+		<div id="Exclusions" class="onglet" style="display:none;min-height:5em;background:#a1a1a1;">Exclusions</div>
+		<div id="Inventaire" class="onglet" style="display:none;min-height:5em;position:absolute;height:100%;width:100%;">
+			<div style="display:flex;flex-direction:column;height:100%;">
+				<div class="titreOnglet">
+					<span style="white-space:nowrap;margin-left:1em;">Fichier <input type="button" id="btnInvFileSave" value="Sauvegarder" />
+						<input type="button" id="btnInvFileLoad" value="Charger" /><input type="file" id="invFileDialog" style="display:none;"/>
+					</span>
+					<span style="white-space:nowrap;margin-left:1em;">Navigateur <input type="button" id="btnInvLocalSave" value="Sauvegarder" />
+						<input type="button" id="btnInvLocalLoad" value="Charger" />
+						<input type="button" id="btnInvRaz" value="Vider" />
+					</span>
+				</div>
+				<div style="height:1em;flex-grow:1;overflow:auto;">
+					<table id="tableInventaire" class="tableInventaire">
+					</table>
+				</div>
 			</div>
 		</div>
-		<div id="reliqueJ3" class="j3 cadreRelique" style="">
-			<div class="joueur">Joueur 3</div>
-			<div class="cadreSelRelique">
-				<select id="selReliqueJ3" class="selRelique">
-					<option value=""></option>
-				</select>
-				<table id="butinJ3" class="tableButin">
-				</table>
+		<div id="Recherche" class="onglet" style="display:none;min-height:5em;position:absolute;height:100%;width:100%;">
+			<div style="display:flex;flex-direction:column;height:100%;">
+				<div class="titreOnglet">
+					<span style="white-space:nowrap;margin-left:1em;">
+						<select id="ereRecherche">
+							<option value="">Toutes</option>
+							<option value="Lith">Lith</option>
+							<option value="Meso">Meso</option>
+							<option value="Neo">Neo</option>
+							<option value="Axi">Axi</option>
+						</select>
+						<input type="text" id="saisieRecherche" value="" placeholder="Butin" />
+					       	<input type="button" id="btnLanceRech" value="Rechercher" />
+					       	<input type="button" id="btnVideRech" value="Vider" />
+					</span>
+				</div>
+				<div style="height:1em;flex-grow:1;overflow:auto;">
+					<div id="listeRecherche">
+				       	</div>
+				</div>
 			</div>
 		</div>
-		<div id="reliqueJ4" class="j4 cadreRelique" style="">
-			<div class="joueur">Joueur 4</div>
-			<div class="cadreSelRelique">
-				<select id="sFelReliqueJ4" class="selRelique">
-					<option value=""></option>
-				</select>
-				<table id="butinJ4" class="tableButin">
-				</table>
-			</div>
-		</div>
 	</div>
-	<div id="choixButin" style="display:none;" class="cadreOptions titreOnglet">
-		Voulez vous ajouter <span id="nomButin" class="wfFont" style="font-weight:bold;"></span> a l'inventaire ? <input type="button" id="addButin" value="Ajouter"/>
-	</div>
-</div>
-<div id="Exclusions" class="onglet" style="display:none;min-height:5em;background:#a1a1a1;">Exclusions</div>
-<div id="Inventaire" class="onglet" style="display:none;min-height:5em;height:100%;">
-	<div style="display:flex;flex-direction:column;height:100%">
-	<div class="titreOnglet">
-		<span style="white-space:nowrap;margin-left:1em;">Fichier <input type="button" id="btnInvFileSave" value="Sauvegarder" />
-			<input type="button" id="btnInvFileLoad" value="Charger" /><input type="file" id="invFileDialog" style="display:none;"/></span>
-		<span style="white-space:nowrap;margin-left:1em;">Navigateur <input type="button" id="btnInvLocalSave" value="Sauvegarder" />
-		<input type="button" id="btnInvLocalLoad" value="Charger" />
-		<input type="button" id="btnInvRaz" value="Vider" />
-	</div>
-	<div style="height:1em;flex-grow:1;overflow:auto;">
-	<table id="tableInventaire" class="tableInventaire">
-	</table>
-	</div>
-	</div>
-</div>
-<div id="Recherche" class="onglet" style="display:none;min-height:5em;background:#bbbbff;">Recherche</div>
-</div>
 
-<div class="footer">
-V0.1
-Updated as of 27 September 2016.
-Inspired by
-<a href="https://forums.warframe.com/topic/697877-tool-fissure-tool-for-fissure-mission/" target="_blank">Ditto132</a>
-</div>
+	<div class="footer">
+		V0.1 Updated as of 27 September 2016. Inspired by <a href="https://forums.warframe.com/profile/1752888-ditto132/" target="_blank">Ditto132</a>
+	</div>
 </body>
 <!-- Script -->
 <script type="text/javascript">
@@ -128,7 +148,11 @@ Inspired by
 	$("#btnInvRaz").click(clearInv);
 	$("#butinJ1, #butinJ2, #butinJ3, #butinJ4").click(choixButin);
 	$("#addButin").click(ajoutButin);
-
+	// $("#ereRecherche").change(ereRecherche);
+	// $("#saisieRecherche").change(saisieRecherche);
+	$("#btnLanceRech").click(recherche);
+	$("#btnVideRech").click(videRecherche);
+	recherche();
 </script>
 <!--
 V0.1 (27 September 2016)
