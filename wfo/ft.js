@@ -341,7 +341,10 @@ function addInventaire(nomObjetPiece)
 // Sauvegarde inventaire dans le storage du navigateur
 function saveInvLocal()
 {
-	window.localStorage.setItem('FissureToolIventory', JSON.stringify(inventaire));
+	if (window.localStorage)
+	{
+		window.localStorage.setItem('FissureToolIventory', JSON.stringify(inventaire));
+	}
 }
 // Export de l'inventaire dans un fichier json
 function saveInvFile()
@@ -363,8 +366,11 @@ function saveInvFile()
 // Chargement de l'inventaire a partir du storage du navigateur
 function loadInvLocal()
 {
-	var jsInv = window.localStorage.getItem('FissureToolIventory');
-	loadInvJson(jsInv);
+	if (window.localStorage)
+	{
+		var jsInv = window.localStorage.getItem('FissureToolIventory');
+		loadInvJson(jsInv);
+	}
 }
 // Clic sur le bouton charger declenche un clic sur l'input de type fichier caché correspondant
 function btnInvFile()
@@ -439,7 +445,7 @@ function clearInv()
 	inventaire = newInventaire();
 	editInventaire();
 }
-// Ajout d'un objet de la table de butin a l'inventaire
+// Affichage du butin choisi
 function choixButin(evt)
 {
 	if (utiliseInventaire)
@@ -453,6 +459,7 @@ function choixButin(evt)
 		}
 	}
 }
+// Ajout d'un objet de la table de butin a l'inventaire
 function ajoutButin(evt)
 {
 	$("#choixButin").hide();
@@ -462,4 +469,112 @@ function ajoutButin(evt)
 		addInventaire(butin);
 	}
 	rafraichitReliques();
+}
+// Met a jour la liste en recherche
+function recherche()
+{
+	// var relicItems={"Axi A1":{"name":"Axi A1","vaulted":false,
+	// 	"rewards":{"Common":["Braton Prime:Stock","Fragor Prime:Head","Trinity Prime:Systems Blueprint"],"Uncommon":["Akstiletto Prime:Barrel","Dual Kamas Prime:Handle"],"Rare":["Nikana Prime:Blueprint"]},
+	// 	"locations":{"Sedna":["Amarna","Berehynia","Hydron","Selkie"],"Eris":["Kala-azar","Nimus","Xini","Zabala"],"Europa":["Cholistan"],"Lua":["Stofler","Tycho"],"Derelict":["Survival"],"Neptune":["Despina","Kelashin","Proteus"],"Void":["Belenus","Mithra","Mot"],"Uranus":["Assur","Caelus","Ophelia","Stephano"],"Pluto":["Cerberus","Hieracon","Outer Terminus","Palus"]}}};
+	var htmlListe = "<ul>";
+	var relique, htmlRelique, butins, numButin, nomButin, reliqueFiltre;
+	/* var locations, planete, missions, numMission, separateur; */
+	var filtreEre = $("#ereRecherche").val();
+	var filtreButin = $("#saisieRecherche").val();
+	var sansFiltre = true;
+	if (filtreButin && filtreButin.length > 2)
+	{
+		sansFiltre = false;
+		filtreButin = filtreButin.toUpperCase();
+	}
+
+	for (var nomRelique in relicItems)
+	{
+		if (filtreEre && nomRelique.indexOf(filtreEre) != 0)
+			continue;
+		
+		relique = relicItems[nomRelique];
+		reliqueFiltre = false || sansFiltre;
+		if (relique.vaulted)
+			htmlRelique = "<li><span class=\"colorGold\">" + relique.name + "</span>";
+		else
+			htmlRelique = "<li>" + relique.name;
+
+		
+		htmlRelique += "<ul>";
+		butins = relique.rewards;
+		for (numButin = 0; numButin < butins.Common.length; numButin++)
+		{
+			nomButin = butins.Common[numButin];
+			if (sansFiltre || nomButin.toUpperCase().indexOf(filtreButin) > -1)
+			{
+				htmlRelique += "<li>"+butins.Common[numButin]+"</li>";
+				reliqueFiltre = true;
+			}
+		}
+		for (numButin = 0; numButin < butins.Uncommon.length; numButin++)
+		{
+			nomButin = butins.Uncommon[numButin];
+			if (sansFiltre || nomButin.toUpperCase().indexOf(filtreButin) > -1)
+			{
+				htmlRelique += "<li class=\"colorSilver\">"+nomButin+"</li>";
+				reliqueFiltre = true;
+			}
+		}
+		for (numButin = 0; numButin < butins.Rare.length; numButin++)
+		{
+			nomButin = butins.Rare[numButin];
+			if (sansFiltre || nomButin.toUpperCase().indexOf(filtreButin) > -1)
+			{
+				htmlRelique += "<li class=\"colorGold\">"+nomButin+"</li>";
+				reliqueFiltre = true;
+			}
+		}
+		htmlRelique += "</ul>";
+		/*
+		if (!relique.vaulted)
+		{
+			htmlRelique += "<li>Missions<ul>";
+			locations = relique.locations;
+			for (planete in locations)
+			{
+				htmlRelique += "<li>" + planete + " (";
+				separateur = "";
+				missions = locations[planete];
+				for (numMission = 0; numMission < missions.length; numMission++)
+				{
+					htmlRelique += separateur + missions[numMission];
+					separateur = ", ";
+				}
+				htmlRelique += ")</li>";
+			}
+			htmlRelique += "</ul></li>";
+		}
+		*/
+		htmlRelique += "</li>";
+		if (reliqueFiltre)
+			htmlListe += htmlRelique;
+	}
+	htmlListe += "</ul>";
+	$("#listeRecherche").html(htmlListe);
+}
+// Modification de l'ere dans les criteres de recherche
+function ereRecherche()
+{
+	// recherche();
+}
+// Saisie d'une valeur pour la recherche
+function saisieRecherche()
+{
+	// if(window.console)console.info("saisieRecherche " + $("#saisieRecherche").val());
+}
+// Clic sur le bouton pour vider les criteres de recherche
+function videRecherche()
+{
+	// $("#ereRecherche").change(ereRecherche);
+	// $("#saisieRecherche").change(saisieRecherche);
+	// $("#btnVideRech").click(videRecherche);
+	/* TODO bloquer recherche */
+       	$("#ereRecherche").val("");
+	$("#saisieRecherche").val("");
 }
