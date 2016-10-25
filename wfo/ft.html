@@ -15,7 +15,7 @@
 <body style="min-height:100vh;margin:0;display:flex;flex-direction:column;">
 	<div class="header" id="header" style="text-align:center;margin:0.5em;">
 		<input type="button" id="btnFissure" class="btnOnglet" data-onglet="Fissure" value="Fissure" />
-		<input type="button" id="btnExcl" class="btnOnglet" data-onglet="Exclusions" value="Exclusions" disabled="disabled" />
+		<input type="button" id="btnExcl" class="btnOnglet" data-onglet="Exclusions" value="Exclusions" />
 		<input type="button" id="btnInv" class="btnOnglet" data-onglet="Inventaire" value="Inventaire" />
 		<input type="button" id="btnRech" class="btnOnglet" data-onglet="Recherche" value="Recherche" />
 	</div>
@@ -30,7 +30,7 @@
 					<option value="Neo">Neo</option>
 					<option value="Axi">Axi</option>
 				</select>
-				<span style="white-space:nowrap;margin-left:1em;"><input type="checkbox" id="chkExclusions" class="chkOptions" value="on" disabled="disabled" />Utiliser les exclusions</span>
+				<span style="white-space:nowrap;margin-left:1em;"><input type="checkbox" id="chkExclusions" class="chkOptions" value="on"/>Utiliser les exclusions</span>
 				<span style="white-space:nowrap;margin-left:1em;"><input type="checkbox" id="chkInventaire" class="chkOptions" value="on"/>Utiliser l&quot;inventaire</span>
 			</div>
 			<div id="reliques" style="display:flex;flex-direction:row;flex-wrap:wrap;">
@@ -79,7 +79,23 @@
 				Voulez vous ajouter <span id="nomButin" class="wfFont" style="font-weight:bold;"></span> a l'inventaire ? <input type="button" id="addButin" value="Ajouter"/>
 			</div>
 		</div>
-		<div id="Exclusions" class="onglet" style="display:none;min-height:5em;background:#a1a1a1;">Exclusions</div>
+		<div id="Exclusions" class="onglet" style="display:none;min-height:5em;position:absolute;height:100%;width:100%;">
+			<div style="display:flex;flex-direction:column;height:100%;">
+				<div class="titreOnglet">
+					<span style="white-space:nowrap;margin-left:1em;">Fichier <input type="button" id="btnExcFileSave" value="Sauvegarder" />
+						<input type="button" id="btnExcFileLoad" value="Charger" /><input type="file" id="excFileDialog" style="display:none;"/>
+					</span>
+					<span style="white-space:nowrap;margin-left:1em;">Navigateur <input type="button" id="btnExcLocalSave" value="Sauvegarder" />
+						<input type="button" id="btnExcLocalLoad" value="Charger" />
+						<input type="button" id="btnExcRaz" value="Vider" />
+					</span>
+				</div>
+				<div style="height:1em;flex-grow:1;overflow:auto;">
+					<table id="tableExclusions" class="tableExclusions">
+					</table>
+				</div>
+			</div>
+		</div>
 		<div id="Inventaire" class="onglet" style="display:none;min-height:5em;position:absolute;height:100%;width:100%;">
 			<div style="display:flex;flex-direction:column;height:100%;">
 				<div class="titreOnglet">
@@ -122,7 +138,7 @@
 	</div>
 
 	<div class="footer">
-		V0.1 Updated as of 27 September 2016. Inspired by <a href="https://forums.warframe.com/profile/1752888-ditto132/" target="_blank">Ditto132</a>
+		V0.2 Updated as of 24 October 2016. Inspired by <a href="https://forums.warframe.com/profile/1752888-ditto132/" target="_blank">Ditto132</a>
 	</div>
 </body>
 <!-- Script -->
@@ -135,17 +151,30 @@
 	$("#header").children(".btnOnglet").click(clicOnglet);
 	initChkOptions();
 	inventaire = newInventaire();
-	loadInvLocal();// editInventaire();
-	$("#chkInventaire").change(changeChkInventaire);
-	$("#chkExclusions").change(changeChkExclusions);
-	$("#tableInventaire").change(qteInventaireChange);
+	loadInvLocal(); // editInventaire();
+	exclusions = [];
+	loadExcLocal(); // editExclusions();
 	changeOnglet("Fissure");
+
+	$("#chkExclusions").change(changeChkExclusions);
+	$("#chkInventaire").change(changeChkInventaire);
+	
+	$("#tableExclusions").click(clickExclusions);
+	$("#btnExcFileSave").click(saveExcFile);
+	$("#btnExcFileLoad").click(btnExcFile);
+	$("#excFileDialog").change(loadExcFile);
+	$("#btnExcLocalSave").click(saveExcLocal);
+	$("#btnExcLocalLoad").click(loadExcLocal);
+	$("#btnExcRaz").click(clearExc);
+
+	$("#tableInventaire").change(qteInventaireChange);
 	$("#btnInvFileSave").click(saveInvFile);
 	$("#btnInvFileLoad").click(btnInvFile);
 	$("#invFileDialog").change(loadInvFile);
 	$("#btnInvLocalSave").click(saveInvLocal);
 	$("#btnInvLocalLoad").click(loadInvLocal);
 	$("#btnInvRaz").click(clearInv);
+
 	$("#butinJ1, #butinJ2, #butinJ3, #butinJ4").click(choixButin);
 	$("#addButin").click(ajoutButin);
 	// $("#ereRecherche").change(ereRecherche);
