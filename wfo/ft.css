@@ -104,16 +104,22 @@ body
 {
 	color: red;
 }
-.tableInventaire
+.tableInventaire,
+.tableExclusions
 {
 	border-collapse: collapse;
 	margin-left: auto;
 	margin-right: auto;
 }
 .tableInventaire, .tableInventaire tr, .tableInventaire td, .tableInventaire th
+.tableExclusions, .tableExclusions tr, .tableExclusions td, .tableExclusions th
 {
 	border: 1px solid black;
 	white-space: nowrap;
+}
+.tableExclusions td
+{
+	cursor: pointer;
 }
 .wfFont
 {

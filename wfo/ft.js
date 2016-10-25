@@ -7,13 +7,24 @@ var itemDucatValues={"Akbronco Prime:Blueprint":15,"Akbronco Prime:Link":45,"Aks
 var itemSets={"Akbronco Prime":{"Blueprint":1,"Link":1},"Akstiletto Prime":{"Barrel":2,"Blueprint":1,"Receiver":2,"Link":1},"Ankyros Prime":{"Blade":2,"Blueprint":1,"Gauntlet":2},"Ash Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Bo Prime":{"Handle":1,"Blueprint":1,"Ornament":2},"Boar Prime":{"Barrel":1,"Blueprint":1,"Receiver":1,"Stock":1},"Boltor Prime":{"Barrel":1,"Blueprint":1,"Receiver":1,"Stock":1},"Braton Prime":{"Barrel":1,"Blueprint":1,"Receiver":1,"Stock":1},"Bronco Prime":{"Barrel":1,"Blueprint":1,"Receiver":1},"Burston Prime":{"Barrel":1,"Blueprint":1,"Receiver":1,"Stock":1},"Carrier Prime":{"Blueprint":1,"Carapace":1,"Cerebrum":1,"Systems":1},"Dakra Prime":{"Blade":1,"Blueprint":1,"Handle":1},"Dual Kamas Prime":{"Blade":2,"Blueprint":1,"Handle":2},"Ember Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Fang Prime":{"Blade":2,"Blueprint":1,"Handle":2},"Forma":{"Blueprint":1},"Fragor Prime":{"Blueprint":1,"Handle":1,"Head":1},"Frost Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Galatine Prime":{"Blade":1,"Blueprint":1,"Handle":1},"Glaive Prime":{"Blade":2,"Blueprint":1,"Disc":1},"Hikou Prime":{"Blueprint":1,"Pouch":2,"Stars":2},"Kavasa Prime Collar":{"Blueprint":1,"Band":1,"Buckle":1},"Latron Prime":{"Barrel":1,"Blueprint":1,"Receiver":1,"Stock":1},"Lex Prime":{"Barrel":1,"Blueprint":1,"Receiver":1},"Loki Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Mag Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Nekros Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Nikana Prime":{"Blade":1,"Blueprint":1,"Hilt":1},"Nova Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Nyx Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Odonata Prime":{"Blueprint":1,"Harness Blueprint":1,"Systems Blueprint":1,"Wings Blueprint":1},"Orthos Prime":{"Blade":2,"Blueprint":1,"Handle":1},"Paris Prime":{"Blueprint":1,"Grip":1,"String":1,"Lower Limb":1,"Upper Limb":1},"Reaper Prime":{"Blade":1,"Blueprint":1,"Handle":1},"Rhino Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Saryn Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Scindo Prime":{"Blade":1,"Blueprint":1,"Handle":1},"Sicarus Prime":{"Barrel":1,"Blueprint":1,"Receiver":1},"Soma Prime":{"Barrel":1,"Blueprint":1,"Receiver":1,"Stock":1},"Spira Prime":{"Blueprint":1,"Pouch":2,"Blade":2},"Tigris Prime":{"Barrel":1,"Blueprint":1,"Receiver":1,"Stock":1},"Trinity Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Vasto Prime":{"Barrel":1,"Blueprint":1,"Receiver":1},"Vauban Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Vectis Prime":{"Barrel":1,"Blueprint":1,"Receiver":1,"Stock":1},"Volt Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Wyrm Prime":{"Blueprint":1,"Carapace":1,"Cerebrum":1,"Systems":1}};
 
 // Variables globales
-var VERSION = 0.1;
+var VERSION = 0.2;
+var DBLOCAL_INV = "FissureToolInventory";
+var DBLOCAL_EXC = "FissureToolExclusions";
 var invFile = "inventaire.json";
+var excFile = "excludeList.json";
 var ongletCourant = "";
 var utiliseExclusions = true;
 var utiliseInventaire = true;
 var inventaire = null;
+var exclusions = [];
+var donneesExclusions = {};
 
+
+// Converti un nom pour l'utiliser en tant qu'id
+function toId(nom)
+{
+	return nom.replace(/[ :]/g, '');
+}
 // Handler changement d'ere des relique
 function ereChange()
 {
@@ -74,20 +85,29 @@ function reliqueChange()
 				for (numButin = 0; numButin < butins.Common.length; numButin++)
 				{
 					nomObjetPiece = butins.Common[numButin];
-					htmlTable += "<tr class=\"lignebutin\" data-butin=\""+nomObjetPiece+"\"><td>"+nomObjetPiece+"</td><td class=\"textRight\">"+itemDucatValues[nomObjetPiece]+"</td>";
-					if (utiliseInventaire) htmlTable += "<td class=\"textRight\">"+nbInvObjet(nomObjetPiece)+"</td></tr>";
+					if (!utiliseExclusions || !isExclude(nomObjetPiece))
+					{
+						htmlTable += "<tr class=\"lignebutin\" data-butin=\""+nomObjetPiece+"\"><td>"+nomObjetPiece+"</td><td class=\"textRight\">"+itemDucatValues[nomObjetPiece]+"</td>";
+						if (utiliseInventaire) htmlTable += "<td class=\"textRight\">"+nbInvObjet(nomObjetPiece)+"</td></tr>";
+					}
 				}
 				for (numButin = 0; numButin < butins.Uncommon.length; numButin++)
 				{
 					nomObjetPiece = butins.Uncommon[numButin];
-					htmlTable += "<tr class=\"lignebutin colorSilver\" data-butin=\""+nomObjetPiece+"\"><td>"+nomObjetPiece+"</td><td class=\"textRight\">"+itemDucatValues[nomObjetPiece]+"</td>";
-					if (utiliseInventaire) htmlTable += "<td class=\"textRight\">"+nbInvObjet(nomObjetPiece)+"</td></tr>";
+					if (!utiliseExclusions || !isExclude(nomObjetPiece))
+					{
+						htmlTable += "<tr class=\"lignebutin colorSilver\" data-butin=\""+nomObjetPiece+"\"><td>"+nomObjetPiece+"</td><td class=\"textRight\">"+itemDucatValues[nomObjetPiece]+"</td>";
+						if (utiliseInventaire) htmlTable += "<td class=\"textRight\">"+nbInvObjet(nomObjetPiece)+"</td></tr>";
+					}
 				}
 				for (numButin = 0; numButin < butins.Rare.length; numButin++)
 				{
 					nomObjetPiece = butins.Rare[numButin];
-					htmlTable += "<tr class=\"lignebutin colorGold\" data-butin=\""+nomObjetPiece+"\"><td>"+nomObjetPiece+"</td><td class=\"textRight\">"+itemDucatValues[nomObjetPiece]+"</td>";
-					if (utiliseInventaire) htmlTable += "<td class=\"textRight\">"+nbInvObjet(nomObjetPiece)+"</td></tr>";
+					if (!utiliseExclusions || !isExclude(nomObjetPiece))
+					{
+						htmlTable += "<tr class=\"lignebutin colorGold\" data-butin=\""+nomObjetPiece+"\"><td>"+nomObjetPiece+"</td><td class=\"textRight\">"+itemDucatValues[nomObjetPiece]+"</td>";
+						if (utiliseInventaire) htmlTable += "<td class=\"textRight\">"+nbInvObjet(nomObjetPiece)+"</td></tr>";
+					}
 				}
 				break;
 			}
@@ -152,11 +172,287 @@ function initChkOptions()
 function changeChkExclusions()
 {
 	utiliseExclusions = $("#chkExclusions").prop('checked');
+	rafraichitReliques();
 }
 function changeChkInventaire()
 {
 	utiliseInventaire = $("#chkInventaire").prop('checked');
 	rafraichitReliques();
+}
+
+// Remplit la table des exclusions
+function editExclusions()
+{
+	var htmlTable;
+        if (utiliseInventaire)
+		htmlTable = "<tr><th>Objet</th><th>Piece</th><th>Inventaire</th></tr>";
+	else
+		htmlTable = "<tr><th>Objet</th><th>Piece</th></tr>";
+	var noms, nomObjet, nomPiece, objet;
+	var premiereLigne = true;
+	var htmlObjet = "";
+	var htmlPieces = "";
+	var classExclu = "";
+	// Boucle sur les objets existants pour reconstruire les données du tableau
+	donneesExclusions = {};
+	for (var i = 0; i < itemPartsList.length; i++)
+	{
+		var objetPiece = itemPartsList[i];
+		noms = objetPiece.split(":");
+		nomObjet = noms[0];
+		nomPiece = noms[1];
+
+		objet = donneesExclusions[nomObjet];
+		if (!objet)
+		{
+			objet = {nbPieces:0, nbExclus:0, exclus:{}};
+			donneesExclusions[nomObjet] = objet;
+		}
+		if (!(nomPiece in objet.exclus))
+			objet.nbPieces++;
+		objet.exclus[nomPiece] = false;
+	}
+	// Boucle sur le contenu des exclusions
+	for (var numExc = 0; numExc < exclusions.length; numExc++)
+	{
+		noms = exclusions[numExc].split(":");
+		nomObjet = noms[0];
+		nomPiece = noms[1];
+		objet = donneesExclusions[nomObjet];
+		if (objet && !objet.exclus[nomPiece])
+		{
+			objet.exclus[nomPiece] = true;
+			objet.nbExclus++;
+		}
+	}
+	// Construction du html
+	for (nomObjet in donneesExclusions)
+	{
+		objet = donneesExclusions[nomObjet];
+		// L'objet regroupant l'ensemble
+		if (objet.nbPieces == objet.nbExclus)
+			classExclu = "bgSilver";
+		else
+			classExclu = "";
+		htmlObjet = "<tr><td id=\"exctd_"+toId(nomObjet)+"\" class=\""+classExclu+"\" data-set=\"" + nomObjet + "\"";
+		if (objet.nbPieces > 1) htmlObjet += " rowspan=" + objet.nbPieces;
+		htmlObjet += ">" + nomObjet + "</td>";
+		// Les differentes pieces de l'ensemble
+		premiereLigne = true;
+		htmlPieces = ""
+		for (nomPiece in objet.exclus)
+		{
+			if (!premiereLigne)
+			{
+			       	htmlPieces += "<tr>";
+			}
+			if (objet.exclus[nomPiece])
+				classExclu = "bgSilver";
+			else
+				classExclu = "";
+			objetPiece = nomObjet+":"+nomPiece;
+			htmlPieces += "<td id=\"exctd_"+toId(objetPiece)+"\" class=\""+classExclu+"\" data-objetpiece=\"" + objetPiece + "\">" + nomPiece + "</td>";
+			if (utiliseInventaire)
+			{
+				htmlPieces += "<td class=\"textRight "+classExclu+"\" data-objetpiece=\"" + objetPiece + "\">";
+				if (inventaire.inventoryItems[nomObjet] && inventaire.inventoryItems[nomObjet][nomPiece])
+					htmlPieces += inventaire.inventoryItems[nomObjet][nomPiece];
+				else
+					htmlPieces += "0";
+				htmlPieces += "</td>";
+			}
+			htmlPieces += "</tr>";
+			premiereLigne = false;
+		}
+		// Concatenation
+		htmlTable += htmlObjet + htmlPieces;
+	}
+
+	$("#tableExclusions").html(htmlTable);
+}
+// Handler edition d'une ligne d'exclusions
+function clickExclusions(evt)
+{
+	var nomObjet = $(evt.target).data("set");
+	var objetPiece =  $(evt.target).data("objetpiece");
+	var nomPiece;
+	var objetExclusion;
+	if (nomObjet)
+	{
+		objetExclusion = donneesExclusions[nomObjet];
+		var exclu = objetExclusion.nbExclus < objetExclusion.nbPieces;
+		if (exclu)
+			objetExclusion.nbExclus = objetExclusion.nbPieces;
+		else
+			objetExclusion.nbExclus = 0;
+		for (nomPiece in objetExclusion.exclus)
+		{
+			objetExclusion.exclus[nomPiece] = exclu;
+		}
+
+	}
+	else if (objetPiece)
+	{
+		var noms = objetPiece.split(":");
+		nomObjet = noms[0];
+		nomPiece = noms[1];
+		objetExclusion = donneesExclusions[nomObjet];
+		if (objetExclusion.exclus[nomPiece])
+		{
+			objetExclusion.exclus[nomPiece] = false;
+			objetExclusion.nbExclus--;
+		}
+		else
+		{
+			objetExclusion.exclus[nomPiece] = true;
+			objetExclusion.nbExclus++;
+		}
+	}
+	// Redessin d'une partie de la table
+	if (objetExclusion)
+	{
+		if (objetExclusion.nbExclus == objetExclusion.nbPieces)
+			$("#exctd_"+toId(nomObjet)).addClass("bgSilver");
+		else
+			$("#exctd_"+toId(nomObjet)).removeClass("bgSilver");
+		var $td;
+		for (nomPiece in objetExclusion.exclus)
+		{
+			$td = $("#exctd_"+toId(nomObjet+nomPiece));
+			if (objetExclusion.exclus[nomPiece])
+				$td.addClass("bgSilver").next().addClass("bgSilver");
+			else
+				$td.removeClass("bgSilver").next().removeClass("bgSilver");
+		}
+	}
+	// Regeneration de la liste des exclusions
+	exclusions = []
+	for (nomObjet in donneesExclusions)
+	{
+		objetExclusion = donneesExclusions[nomObjet];
+		for (nomPiece in objetExclusion.exclus)
+		{
+			if (objetExclusion.exclus[nomPiece])
+				exclusions.push(nomObjet + ":" + nomPiece);
+		}
+	}
+}
+// Renvoit true si un objet est exclu
+function isExclude(nom)
+{
+	if (exclusions.indexOf)
+	{
+		return exclusions.indexOf(nom) > -1;
+	}
+	for (var numExc = 0; numExc < exclusions.length; numExc++)
+	{
+		if (exclusions[numExc] == nom)
+			return true;
+	}
+	return false;
+}
+// Sauvegarde exclusions dans le storage du navigateur
+function saveExcLocal()
+{
+	if (window.localStorage)
+	{
+		window.localStorage.setItem(DBLOCAL_EXC, JSON.stringify(exclusions));
+	}
+}
+// Export des exclusions dans un fichier json
+function saveExcFile()
+{
+	var jsInv = JSON.stringify(exclusions);
+	if (window.navigator.msSaveOrOpenBlob)
+	{
+		window.navigator.msSaveBlob(new Blob([jsInv], {type:"text/plain"}), excFile);
+	}
+	else
+	{
+		var url = "data:text/plain;charset=utf-8," + encodeURIComponent(jsInv);
+		var $lien = $("<a style=\"display:none;\" download=\"" + excFile + "\" href=\"data:text/plain;charset=utf-8," + encodeURIComponent(jsInv) + "\">save</a>");
+		$("#Exclusions").append($lien);
+		$lien[0].click();
+		$lien.remove();
+	}
+}
+// Chargement des exclusions a partir du storage du navigateur
+function loadExcLocal()
+{
+	if (window.localStorage)
+	{
+		var jsExc = window.localStorage.getItem(DBLOCAL_EXC);
+		loadExcJson(jsExc);
+	}
+	else
+	{
+		editExclusions();
+	}
+}
+// Clic sur le bouton charger declenche un clic sur l'input de type fichier caché correspondant
+function btnExcFile()
+{
+	$("#excFileDialog").trigger("click");
+}
+// Chargement d'un fichier dans l'input type file caché
+function loadExcFile(evt)
+{
+	var fichiers = [];
+	var fichier = null;
+	
+	if (evt && evt.target)
+		fichiers = evt.target.files;
+
+	if (fichiers && fichiers.length > 0)
+		fichier = fichiers[0];
+
+	if (fichier)
+	{
+		excFile = fichier.name;
+		var freader = new FileReader();
+		freader.onload = loadedExcFile;
+		freader.onerror = errLoadExcFile;
+		freader.readAsText(fichier, "UTF-8");
+	}
+}
+// Handler donnees du fichier lu
+function loadedExcFile(evt)
+{
+	if (evt && evt.target)
+		loadExcJson(evt.target.result);
+}
+// Erreur chargement de fichier
+function errLoadExcFile()
+{
+	alert("Erreur de chargement du fichier d'exclusions.");
+}
+// Chargement des exclusions a partir d'un fichier
+function loadExcJson(jsExc)
+{
+	var excCharge = null;
+	try
+	{
+		if (null === jsExc)
+			excCharge = [];
+		else
+			excCharge = JSON.parse(jsExc);
+	}
+	catch (ex)
+	{
+		excCharge = null;
+		alert("Erreur au chargement, format d'exclusions incorrect.");
+	}
+	if (excCharge)
+	{
+		exclusions = excCharge;
+		editExclusions();
+	}
+}
+// Vide les exclusions
+function clearExc()
+{
+	exclusions = [];
+	editExclusions();
 }
 // Creation d'un inventaire vide
 function newInventaire()
@@ -192,7 +488,8 @@ function editInventaire()
 	var htmlPieces = "";
 	var nbPieces = 0;
 	var complet = false;
-	for(var i = 0; i < itemPartsList.length; i++)
+	// Boucle sur les objets existants pour construire les données du tableau
+	for (var i = 0; i < itemPartsList.length; i++)
 	{
 		var objetPiece = itemPartsList[i];
 		var noms = objetPiece.split(":");
@@ -207,6 +504,7 @@ function editInventaire()
 		}
 		if (!(nomPiece in objet.pieces))
 			objet.nbPieces++;
+		// TODO entrees de l'inventaire plus presentes ou incorrectes par rapport a la liste d'objets
 		if (objetsInventaire[nomObjet] && objetsInventaire[nomObjet][nomPiece])
 			objet.pieces[nomPiece] = objetsInventaire[nomObjet][nomPiece];
 		else
@@ -343,7 +641,7 @@ function saveInvLocal()
 {
 	if (window.localStorage)
 	{
-		window.localStorage.setItem('FissureToolIventory', JSON.stringify(inventaire));
+		window.localStorage.setItem(DBLOCAL_INV, JSON.stringify(inventaire));
 	}
 }
 // Export de l'inventaire dans un fichier json
@@ -368,8 +666,12 @@ function loadInvLocal()
 {
 	if (window.localStorage)
 	{
-		var jsInv = window.localStorage.getItem('FissureToolIventory');
+		var jsInv = window.localStorage.getItem(DBLOCAL_INV);
 		loadInvJson(jsInv);
+	}
+	else
+	{
+		editInventaire();
 	}
 }
 // Clic sur le bouton charger declenche un clic sur l'input de type fichier caché correspondant
@@ -377,7 +679,7 @@ function btnInvFile()
 {
 	$("#invFileDialog").trigger("click");
 }
-// Chargement d'un fichier dans le l'input type file caché
+// Chargement d'un fichier dans l'input type file caché
 function loadInvFile(evt)
 {
 	var fichiers = [];
@@ -425,7 +727,7 @@ function loadInvJson(jsInv)
 	catch (ex)
 	{
 		invCharge = null;
-		errMsg = "Erreur au chargement, format incorrect.";
+		errMsg = "Erreur au chargement, format d'inventaire incorrect.";
 	}
 	if (null === errMsg && invCharge && invCharge.version != VERSION)
 		errMsg = "Version non supportee.";
