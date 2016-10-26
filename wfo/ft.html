@@ -32,6 +32,7 @@
 				</select>
 				<span style="white-space:nowrap;margin-left:1em;"><input type="checkbox" id="chkExclusions" class="chkOptions" value="on"/>Utiliser les exclusions</span>
 				<span style="white-space:nowrap;margin-left:1em;"><input type="checkbox" id="chkInventaire" class="chkOptions" value="on"/>Utiliser l&quot;inventaire</span>
+				<span style="white-space:nowrap;margin-left:1em;"><input type="checkbox" id="chkAutoSave" class="chkOptions" value="on"/>Sauvegarde automatique</span>
 			</div>
 			<div id="reliques" style="display:flex;flex-direction:row;flex-wrap:wrap;">
 				<div id="reliqueJ1" class="j1 cadreRelique" style="">
@@ -85,8 +86,11 @@
 					<span style="white-space:nowrap;margin-left:1em;">Fichier <input type="button" id="btnExcFileSave" value="Sauvegarder" />
 						<input type="button" id="btnExcFileLoad" value="Charger" /><input type="file" id="excFileDialog" style="display:none;"/>
 					</span>
-					<span style="white-space:nowrap;margin-left:1em;">Navigateur <input type="button" id="btnExcLocalSave" value="Sauvegarder" />
+					<span style="white-space:nowrap;margin-left:1em;">
+						<!--
+						Navigateur <input type="button" id="btnExcLocalSave" value="Sauvegarder" />
 						<input type="button" id="btnExcLocalLoad" value="Charger" />
+						-->
 						<input type="button" id="btnExcRaz" value="Vider" />
 					</span>
 				</div>
@@ -102,8 +106,11 @@
 					<span style="white-space:nowrap;margin-left:1em;">Fichier <input type="button" id="btnInvFileSave" value="Sauvegarder" />
 						<input type="button" id="btnInvFileLoad" value="Charger" /><input type="file" id="invFileDialog" style="display:none;"/>
 					</span>
-					<span style="white-space:nowrap;margin-left:1em;">Navigateur <input type="button" id="btnInvLocalSave" value="Sauvegarder" />
+					<span style="white-space:nowrap;margin-left:1em;">
+						<!--
+						Navigateur <input type="button" id="btnInvLocalSave" value="Sauvegarder" />
 						<input type="button" id="btnInvLocalLoad" value="Charger" />
+						-->
 						<input type="button" id="btnInvRaz" value="Vider" />
 					</span>
 				</div>
@@ -151,28 +158,35 @@
 	$("#header").children(".btnOnglet").click(clicOnglet);
 	initChkOptions();
 	inventaire = newInventaire();
-	loadInvLocal(); // editInventaire();
+	if (autoSave)
+		loadInvLocal(true);
+	else
+		editInventaire();
 	exclusions = [];
-	loadExcLocal(); // editExclusions();
+	if (autoSave)
+		loadExcLocal(true);
+	else
+		editExclusions();
 	changeOnglet("Fissure");
 
 	$("#chkExclusions").change(changeChkExclusions);
 	$("#chkInventaire").change(changeChkInventaire);
+	$("#chkAutoSave").change(changeChkAutoSave);
 	
 	$("#tableExclusions").click(clickExclusions);
 	$("#btnExcFileSave").click(saveExcFile);
 	$("#btnExcFileLoad").click(btnExcFile);
 	$("#excFileDialog").change(loadExcFile);
-	$("#btnExcLocalSave").click(saveExcLocal);
-	$("#btnExcLocalLoad").click(loadExcLocal);
+	//$("#btnExcLocalSave").click(saveExcLocal);
+	//$("#btnExcLocalLoad").click(btnLoadExcLocal);
 	$("#btnExcRaz").click(clearExc);
 
 	$("#tableInventaire").change(qteInventaireChange);
 	$("#btnInvFileSave").click(saveInvFile);
 	$("#btnInvFileLoad").click(btnInvFile);
 	$("#invFileDialog").change(loadInvFile);
-	$("#btnInvLocalSave").click(saveInvLocal);
-	$("#btnInvLocalLoad").click(loadInvLocal);
+	//$("#btnInvLocalSave").click(saveInvLocal);
+	//$("#btnInvLocalLoad").click(btnLoadInvLocal);
 	$("#btnInvRaz").click(clearInv);
 
 	$("#butinJ1, #butinJ2, #butinJ3, #butinJ4").click(choixButin);

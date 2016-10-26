@@ -15,6 +15,7 @@ var excFile = "excludeList.json";
 var ongletCourant = "";
 var utiliseExclusions = true;
 var utiliseInventaire = true;
+var autoSave = true;
 var inventaire = null;
 var exclusions = [];
 var donneesExclusions = {};
@@ -135,6 +136,19 @@ function changeOnglet(nomOnglet)
 {
 	if (ongletCourant && ongletCourant != nomOnglet)
 	{
+		if (autoSave)
+		{
+			if ("Exclusions" == ongletCourant)
+			{
+				if(window.console)console.info("save exc");
+				saveExcLocal();
+			}
+			if ("Inventaire" == ongletCourant)
+			{
+				if(window.console)console.info("save inv");
+				saveInvLocal();
+			}
+		}
 		var onglet = $("#" + ongletCourant);
 		ongletCourant = nomOnglet;
 		if (ongletCourant)
@@ -168,6 +182,7 @@ function initChkOptions()
 {
 	$("#chkExclusions").prop('checked', utiliseExclusions);
 	$("#chkInventaire").prop('checked', utiliseInventaire);
+	$("#chkAutoSave").prop('checked', autoSave);
 }
 function changeChkExclusions()
 {
@@ -178,6 +193,10 @@ function changeChkInventaire()
 {
 	utiliseInventaire = $("#chkInventaire").prop('checked');
 	rafraichitReliques();
+}
+function changeChkAutoSave()
+{
+	autoSave = $("#chkAutoSave").prop('checked');
 }
 
 // Remplit la table des exclusions
@@ -377,12 +396,16 @@ function saveExcFile()
 	}
 }
 // Chargement des exclusions a partir du storage du navigateur
-function loadExcLocal()
+function btnLoadExcLocal()
+{
+	loadExcLocal(false);
+}
+function loadExcLocal(silent)
 {
 	if (window.localStorage)
 	{
 		var jsExc = window.localStorage.getItem(DBLOCAL_EXC);
-		loadExcJson(jsExc);
+		loadExcJson(jsExc, silent);
 	}
 	else
 	{
@@ -419,7 +442,7 @@ function loadExcFile(evt)
 function loadedExcFile(evt)
 {
 	if (evt && evt.target)
-		loadExcJson(evt.target.result);
+		loadExcJson(evt.target.result, false);
 }
 // Erreur chargement de fichier
 function errLoadExcFile()
@@ -427,7 +450,7 @@ function errLoadExcFile()
 	alert("Erreur de chargement du fichier d'exclusions.");
 }
 // Chargement des exclusions a partir d'un fichier
-function loadExcJson(jsExc)
+function loadExcJson(jsExc, silent)
 {
 	var excCharge = null;
 	try
@@ -440,7 +463,8 @@ function loadExcJson(jsExc)
 	catch (ex)
 	{
 		excCharge = null;
-		alert("Erreur au chargement, format d'exclusions incorrect.");
+		if (!silent)
+			alert("Erreur au chargement, format d'exclusions incorrect.");
 	}
 	if (excCharge)
 	{
@@ -662,12 +686,16 @@ function saveInvFile()
 	}
 }
 // Chargement de l'inventaire a partir du storage du navigateur
-function loadInvLocal()
+function btnLoadInvLocal()
+{
+	loadInvLocal(false);
+}
+function loadInvLocal(silent)
 {
 	if (window.localStorage)
 	{
 		var jsInv = window.localStorage.getItem(DBLOCAL_INV);
-		loadInvJson(jsInv);
+		loadInvJson(jsInv, silent);
 	}
 	else
 	{
@@ -704,7 +732,7 @@ function loadInvFile(evt)
 function loadedInvFile(evt)
 {
 	if (evt && evt.target)
-		loadInvJson(evt.target.result);
+		loadInvJson(evt.target.result, false);
 }
 // Erreur chargement de fichier
 function errLoadInvFile()
@@ -712,7 +740,7 @@ function errLoadInvFile()
 	alert("Erreur de chargement du fichier d'inventaire.");
 }
 // Chargement de l'inventaire a partir d'un fichier
-function loadInvJson(jsInv)
+function loadInvJson(jsInv, silent)
 {
 	var invCharge = null;
 	var errMsg = null;
@@ -731,7 +759,7 @@ function loadInvJson(jsInv)
 	}
 	if (null === errMsg && invCharge && invCharge.version != VERSION)
 		errMsg = "Version non supportee.";
-	if (null !== errMsg)
+	if (null !== errMsg && !silent)
 	{
 		alert(errMsg);
 	}
