@@ -140,12 +140,12 @@ function changeOnglet(nomOnglet)
 		{
 			if ("Exclusions" == ongletCourant)
 			{
-				if(window.console)console.info("save exc");
+				if(window.console) console.info("Sauvegarde exclusions.");
 				saveExcLocal();
 			}
 			if ("Inventaire" == ongletCourant)
 			{
-				if(window.console)console.info("save inv");
+				if(window.console) console.info("Sauvegarde inventaire.");
 				saveInvLocal();
 			}
 		}
