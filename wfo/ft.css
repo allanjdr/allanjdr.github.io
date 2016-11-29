@@ -105,14 +105,16 @@ body
 	color: red;
 }
 .tableInventaire,
-.tableExclusions
+.tableExclusions,
+.tableLocation
 {
 	border-collapse: collapse;
 	margin-left: auto;
 	margin-right: auto;
 }
-.tableInventaire, .tableInventaire tr, .tableInventaire td, .tableInventaire th
-.tableExclusions, .tableExclusions tr, .tableExclusions td, .tableExclusions th
+.tableInventaire, .tableInventaire tr, .tableInventaire td, .tableInventaire th,
+.tableExclusions, .tableExclusions tr, .tableExclusions td, .tableExclusions th,
+.tableLocation, .tableLocation tr, .tableLocation td, .tableLocation th
 {
 	border: 1px solid black;
 	white-space: nowrap;
@@ -120,6 +122,17 @@ body
 .tableExclusions td
 {
 	cursor: pointer;
+}
+.locationPlanete
+{
+	text-align: center;
+}
+.locationMission td
+{
+	text-align: center;
+	font-size: 0.8em;
+	padding: 0 2px;
+	overflow: hidden;
 }
 .wfFont
 {

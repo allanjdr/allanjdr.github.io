@@ -7,7 +7,7 @@ var itemDucatValues={"Akbronco Prime:Blueprint":15,"Akbronco Prime:Link":45,"Aks
 var itemSets={"Akbronco Prime":{"Blueprint":1,"Link":1},"Akstiletto Prime":{"Barrel":2,"Blueprint":1,"Receiver":2,"Link":1},"Ankyros Prime":{"Blade":2,"Blueprint":1,"Gauntlet":2},"Ash Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Bo Prime":{"Handle":1,"Blueprint":1,"Ornament":2},"Boar Prime":{"Barrel":1,"Blueprint":1,"Receiver":1,"Stock":1},"Boltor Prime":{"Barrel":1,"Blueprint":1,"Receiver":1,"Stock":1},"Braton Prime":{"Barrel":1,"Blueprint":1,"Receiver":1,"Stock":1},"Bronco Prime":{"Barrel":1,"Blueprint":1,"Receiver":1},"Burston Prime":{"Barrel":1,"Blueprint":1,"Receiver":1,"Stock":1},"Carrier Prime":{"Blueprint":1,"Carapace":1,"Cerebrum":1,"Systems":1},"Dakra Prime":{"Blade":1,"Blueprint":1,"Handle":1},"Dual Kamas Prime":{"Blade":2,"Blueprint":1,"Handle":2},"Ember Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Fang Prime":{"Blade":2,"Blueprint":1,"Handle":2},"Forma":{"Blueprint":1},"Fragor Prime":{"Blueprint":1,"Handle":1,"Head":1},"Frost Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Galatine Prime":{"Blade":1,"Blueprint":1,"Handle":1},"Glaive Prime":{"Blade":2,"Blueprint":1,"Disc":1},"Hikou Prime":{"Blueprint":1,"Pouch":2,"Stars":2},"Kavasa Prime Collar":{"Blueprint":1,"Band":1,"Buckle":1},"Latron Prime":{"Barrel":1,"Blueprint":1,"Receiver":1,"Stock":1},"Lex Prime":{"Barrel":1,"Blueprint":1,"Receiver":1},"Loki Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Mag Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Nekros Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Nikana Prime":{"Blade":1,"Blueprint":1,"Hilt":1},"Nova Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Nyx Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Odonata Prime":{"Blueprint":1,"Harness Blueprint":1,"Systems Blueprint":1,"Wings Blueprint":1},"Orthos Prime":{"Blade":2,"Blueprint":1,"Handle":1},"Paris Prime":{"Blueprint":1,"Grip":1,"String":1,"Lower Limb":1,"Upper Limb":1},"Reaper Prime":{"Blade":1,"Blueprint":1,"Handle":1},"Rhino Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Saryn Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Scindo Prime":{"Blade":1,"Blueprint":1,"Handle":1},"Sicarus Prime":{"Barrel":1,"Blueprint":1,"Receiver":1},"Soma Prime":{"Barrel":1,"Blueprint":1,"Receiver":1,"Stock":1},"Spira Prime":{"Blueprint":1,"Pouch":2,"Blade":2},"Tigris Prime":{"Barrel":1,"Blueprint":1,"Receiver":1,"Stock":1},"Trinity Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Vasto Prime":{"Barrel":1,"Blueprint":1,"Receiver":1},"Vauban Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Vectis Prime":{"Barrel":1,"Blueprint":1,"Receiver":1,"Stock":1},"Volt Prime":{"Blueprint":1,"Chassis Blueprint":1,"Neuroptics Blueprint":1,"Systems Blueprint":1},"Wyrm Prime":{"Blueprint":1,"Carapace":1,"Cerebrum":1,"Systems":1}};
 
 // Variables globales
-var VERSION = 0.2;
+var VERSION = 0.3;
 var DBLOCAL_INV = "FissureToolInventory";
 var DBLOCAL_EXC = "FissureToolExclusions";
 var invFile = "inventaire.json";
@@ -24,7 +24,7 @@ var donneesExclusions = {};
 // Converti un nom pour l'utiliser en tant qu'id
 function toId(nom)
 {
-	return nom.replace(/[ :]/g, '');
+	return nom.replace(/prime/ig, '').replace(/[ :]/g, '');
 }
 // Handler changement d'ere des relique
 function ereChange()
@@ -464,7 +464,7 @@ function loadExcJson(jsExc, silent)
 	{
 		excCharge = null;
 		if (!silent)
-			alert("Erreur au chargement, format d'exclusions incorrect.");
+		alert("Erreur au chargement, format d'exclusions incorrect.");
 	}
 	if (excCharge)
 	{
@@ -478,10 +478,22 @@ function clearExc()
 	exclusions = [];
 	editExclusions();
 }
+var timerFiltreInventaire;
+var dernierFiltreInventaire;
+function saisieFiltreInventaire(evt)
+{
+	var val = $("#filtreInventaire").val();
+	if (val != dernierFiltreInventaire)
+	{
+		clearTimeout(timerFiltreInventaire);
+		dernierFiltreInventaire = val;
+		timeFiltreInventaire = setTimeout(editInventaire, 500);
+	}
+}
 // Creation d'un inventaire vide
 function newInventaire()
 {
-	inventaireVide = {"ducats":0, "inventoryItems":{}, "log":[], version:VERSION};
+	var inventaireVide = {"ducats":0, "inventoryItems":{}, "log":[], version:VERSION};
 	/*
 	var objetsInventaire = inventaireVide.inventoryItems;
 	for(var i = 0; i < itemPartsList.length; i++)
@@ -503,7 +515,7 @@ function newInventaire()
 // Remplit la table de modification de l'inventaire
 function editInventaire()
 {
-	var htmlTable = "<tr><th>Objet</th><th>Piece</th><th>Quantite</th></tr>";
+	var htmlTable = ""; // On a deja une entete "<tr><th>Objet</th><th>Piece</th><th>Quantite</th></tr>";
 	var donneesTable = {};
 	var nomObjet, nomPiece, objet;
 	var premiereLigne = true;
@@ -512,6 +524,13 @@ function editInventaire()
 	var htmlPieces = "";
 	var nbPieces = 0;
 	var complet = false;
+	var filtreButin = $("#filtreInventaire").val();
+	var sansFiltre = true;
+	if (filtreButin && filtreButin.length > 1)
+	{
+		sansFiltre = false;
+		filtreButin = filtreButin.toUpperCase();
+	}
 	// Boucle sur les objets existants pour construire les données du tableau
 	for (var i = 0; i < itemPartsList.length; i++)
 	{
@@ -520,19 +539,22 @@ function editInventaire()
 		nomObjet = noms[0];
 		nomPiece = noms[1];
 
-		objet = donneesTable[nomObjet];
-		if (!objet)
+		if (sansFiltre || nomObjet.toUpperCase().indexOf(filtreButin) > -1)
 		{
-			objet = {nbPieces:0, pieces:{}};
-			donneesTable[nomObjet] = objet;
+			objet = donneesTable[nomObjet];
+			if (!objet)
+			{
+				objet = {nbPieces:0, pieces:{}};
+				donneesTable[nomObjet] = objet;
+			}
+			if (!(nomPiece in objet.pieces))
+				objet.nbPieces++;
+			// TODO entrees de l'inventaire plus presentes ou incorrectes par rapport a la liste d'objets
+			if (objetsInventaire[nomObjet] && objetsInventaire[nomObjet][nomPiece])
+				objet.pieces[nomPiece] = objetsInventaire[nomObjet][nomPiece];
+			else
+				objet.pieces[nomPiece] = 0;
 		}
-		if (!(nomPiece in objet.pieces))
-			objet.nbPieces++;
-		// TODO entrees de l'inventaire plus presentes ou incorrectes par rapport a la liste d'objets
-		if (objetsInventaire[nomObjet] && objetsInventaire[nomObjet][nomPiece])
-			objet.pieces[nomPiece] = objetsInventaire[nomObjet][nomPiece];
-		else
-			objet.pieces[nomPiece] = 0;
 	}
 	for (nomObjet in donneesTable)
 	{
@@ -546,12 +568,23 @@ function editInventaire()
 			nbPieces = objet.pieces[nomPiece];
 			complet = complet && nbPieces > 0;
 			if (!premiereLigne) htmlPieces += "<tr>";
+			/* Version 1, zone de saisie sur chaque ligne */
 			if (nbPieces > 0)
 				htmlPieces += "<td class=\"bgSilver\">" + nomPiece + "</td><td class=\"bgSilver\"><input class=\"invNbPiece\" type=\"number\" min=\"0\" data-nomobjet=\"" + nomObjet + "\" data-nompiece=\"" + nomPiece + "\" value=\"" + objet.pieces[nomPiece] + "\"/></td></tr>";
 			else
 				htmlPieces += "<td>" + nomPiece + "</td><td><input class=\"invNbPiece\" type=\"number\" min=\"0\" data-nomobjet=\"" + nomObjet + "\" data-nompiece=\"" + nomPiece + "\" value=\"" + objet.pieces[nomPiece] + "\"/></td></tr>";
-			htmlPieces += "<input class=\"invNbPiece\" type=\"number\" min=\"0\" data-nomobjet=\"" + nomObjet + "\" data-nompiece=\"" + nomPiece + "\" value=\"" + objet.pieces[nomPiece] + "\"/></td></tr>";
+			 htmlPieces += "<input class=\"invNbPiece\" type=\"number\" min=\"0\" data-nomobjet=\"" + nomObjet + "\" data-nompiece=\"" + nomPiece + "\" value=\"" + objet.pieces[nomPiece] + "\"/></td></tr>";
 			// htmlPieces += "<td>" + nomPiece + "</td><td>" + objet.pieces[nomPiece] + "</td></tr>";
+
+			/* Version 2, zone de saisie dynamique
+			if (nbPieces > 0)
+				htmlPieces += "<td class=\"bgSilver\">" + nomPiece + "</td><td class=\"bgSilver\"";
+			else
+				htmlPieces += "<td>" + nomPiece + "</td><td";
+			htmlPieces += " data-nomobjet=\"" + nomObjet + "\" data-nompiece=\"" + nomPiece + "\" data-nbpiece=\"" + objet.pieces[nomPiece] + "\">";
+			htmlPieces += "<span>" + objet.pieces[nomPiece] + "</span>"
+			htmlPieces += "</td></tr>";
+			*/
 			premiereLigne = false;
 		}
 		htmlObjet = "<tr><td";
@@ -562,7 +595,7 @@ function editInventaire()
 		htmlTable += htmlObjet + htmlPieces;
 	}
 
-	$("#tableInventaire").html(htmlTable);
+	$("#tableInventaire").children("tbody").html(htmlTable);
 }
 // Handler edition d'une ligne de l'inventaire
 function qteInventaireChange(evt)
@@ -800,6 +833,25 @@ function ajoutButin(evt)
 	}
 	rafraichitReliques();
 }
+var timerRecherche;
+var dernierFiltreRecherche
+// Modification de l'ere dans les criteres de recherche
+function ereRecherche()
+{
+	clearTimeout(timerRecherche);
+	recherche();
+}
+// Saisie d'une valeur pour la recherche
+function saisieRecherche()
+{
+	var val = $("#saisieRecherche").val();
+	if (val != dernierFiltreRecherche)
+	{
+		clearTimeout(timerRecherche);
+		dernierFiltreRecherche = val;
+		timerRecherche = setTimeout(recherche, 500);
+	}
+}
 // Met a jour la liste en recherche
 function recherche()
 {
@@ -812,7 +864,7 @@ function recherche()
 	var filtreEre = $("#ereRecherche").val();
 	var filtreButin = $("#saisieRecherche").val();
 	var sansFiltre = true;
-	if (filtreButin && filtreButin.length > 2)
+	if (filtreButin && filtreButin.length > 1)
 	{
 		sansFiltre = false;
 		filtreButin = filtreButin.toUpperCase();
@@ -887,16 +939,6 @@ function recherche()
 	}
 	htmlListe += "</ul>";
 	$("#listeRecherche").html(htmlListe);
-}
-// Modification de l'ere dans les criteres de recherche
-function ereRecherche()
-{
-	// recherche();
-}
-// Saisie d'une valeur pour la recherche
-function saisieRecherche()
-{
-	// if(window.console)console.info("saisieRecherche " + $("#saisieRecherche").val());
 }
 // Clic sur le bouton pour vider les criteres de recherche
 function videRecherche()

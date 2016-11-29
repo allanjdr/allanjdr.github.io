@@ -3,6 +3,7 @@
 <html lang="fr">
 <head>
 <title>Fissure Tool</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
 <!-- Style -->
 <link href="https://fonts.googleapis.com/css?family=Michroma" rel="stylesheet"> 
@@ -18,6 +19,7 @@
 		<input type="button" id="btnExcl" class="btnOnglet" data-onglet="Exclusions" value="Exclusions" />
 		<input type="button" id="btnInv" class="btnOnglet" data-onglet="Inventaire" value="Inventaire" />
 		<input type="button" id="btnRech" class="btnOnglet" data-onglet="Recherche" value="Recherche" />
+		<input type="button" id="btnEdit" class="btnOnglet" data-onglet="Editeur" value="Editeur" />
 	</div>
 	<div class="main" id="main" style="flex-grow:1;height:2em;overflow:auto;position:relative;">
 		<div id="Fissure" class="onglet" style="display:none;">
@@ -116,6 +118,11 @@
 				</div>
 				<div style="height:1em;flex-grow:1;overflow:auto;">
 					<table id="tableInventaire" class="tableInventaire">
+						<thead>
+							<tr><th>Objet <input type="text" id="filtreInventaire" style="border:none;margin:0 2px;" value="" placeholder="Filtre" /></th><th>Piece</th><th>Quantite</th></tr>
+						</thead>
+						<tbody>
+						</tbody>
 					</table>
 				</div>
 			</div>
@@ -132,8 +139,10 @@
 							<option value="Axi">Axi</option>
 						</select>
 						<input type="text" id="saisieRecherche" value="" placeholder="Butin" />
+						<!--
 					       	<input type="button" id="btnLanceRech" value="Rechercher" />
 					       	<input type="button" id="btnVideRech" value="Vider" />
+						-->
 					</span>
 				</div>
 				<div style="height:1em;flex-grow:1;overflow:auto;">
@@ -142,10 +151,78 @@
 				</div>
 			</div>
 		</div>
+		<div id="Editeur" class="onglet" style="display:none;min-height:5em;position:absolute;height:100%;width:100%;">
+			<div style="display:flex;flex-direction:column;height:100%;">
+				<div class="titreOnglet">
+					<span style="white-space:nowrap;margin-left:1em;">Fichier <input type="button" id="btnEditFileSave" value="Sauvegarder" />
+						<input type="button" id="btnEditFileLoad" value="Charger" /><input type="file" id="editFileDialog" style="display:none;"/>
+						<input type="button" id="btnEditRaz" value="Vider" />
+					</span>
+				</div>
+				<div style="height:1em;flex-grow:1;overflow:auto;">
+					<div id="EditeurSelRelique">
+						Ere: 
+						<select id="ereEditeur">
+							<option value="Lith">Lith</option>
+							<option value="Meso">Meso</option>
+							<option value="Neo">Neo</option>
+							<option value="Axi">Axi</option>
+						</select>
+						<br/>
+						<select id="listEditeur" size="10">
+							<optgroup id="listLithEditeur">
+								<option value="A1">A1</option>
+							</optgroup>
+							<optgroup id="listMesoEditeur">
+								<option value="A2">A2</option>
+								<option value="A3">A3</option>
+							</optgroup>
+						</select>
+				       	</div>
+					<div>
+						<fieldset id="editeurSaisie" name="SaisieRelique">
+						Nom:<input type="text" id="editSaisieNomRelique" value="" placeHolder="XX"/><br/>
+						Vault:<input type="checkbox" id="editSaisieVault" value="vault"/><br/>
+						Location:<br/>
+						<table class="tableLocation" style="white-space:nowrap;">
+							<tr class="locationPlanete"><th>Mercury</th>	<th>Venus</th>		<th>Earth</th>		<th>Mars</th>		<th>Phobos</th>		<th>Ceres</th>	<th>Jupiter</th>	<th>Europa</th>		<th>Saturn</th>		<th>Uranus</th>		<th>Lua</th>		<th>Neptune</th>	<th>Pluto</th>		<th>Sedna</th>		<th>Kuva Fortress</th>	<th>Eris</th>		<th>Derelict</th>	<th>Void</th></tr>
+							<tr class="locationMission"><td>Apollodorus</td><td>Aphrodite</td>	<td>Cambria</td>	<td>Alator</td>		<td>Gulliver</td>	<td>Bode</td>	<td>Adrastea</td>	<td>Abaddon</td>	<td>Anthe</td>		<td>Ariel</td>		<td>Copernicus</td>	<td>Despina</td>	<td>Acheron</td>	<td>Adaro</td>		<td>Dakata</td>		<td>Akkad</td>		<td>Assassinate</td>	<td>Ani</td></tr>
+							<tr class="locationMission"><td>Boethius</td>	<td>Cytherean</td>	<td>Cervantes</td>	<td>Ara</td>		<td>Illiad</td>		<td>Casta</td>	<td>Amalthea</td>	<td>Armaros</td>	<td>Calypso</td>	<td>Assur</td>		<td>Grimaldi</td>	<td>Galatea</td>	<td>Cerberus</td>	<td>Amarna</td>		<td>Koro</td>		<td>Brugia</td>		<td>Capture</td>	<td>Aten</td></tr>
+							<tr class="locationMission"><td>Caloris</td>	<td>E Gate</td>		<td>Cobae</td>		<td>Ares</td>		<td>Kepler</td>		<td>Cinxia</td>	<td>Ananke</td>		<td>Baal</td>		<td>Caracol</td>	<td>Caelus</td>		<td>Pavlov</td>		<td>Kelashin</td>	<td>Cypress</td>	<td>Berehynia</td>	<td>Rotuma</td>		<td>Isos</td>		<td>Defense</td>	<td>Belenus</td></tr>
+							<tr class="locationMission"><td>Elion</td>	<td>Fossa</td>		<td>E Prime</td>	<td>Arval</td>		<td>Memphis</td>	<td>Draco</td>	<td>Callisto</td>	<td>Cholistan</td>	<td>Cassini</td>	<td>Caliban</td>	<td>Plato</td>		<td>Laomedeia</td>	<td>Hades</td>		<td>Charybdis</td>	<td>Nabuc</td>		<td>Kala-azar</td>	<td>Exterminate</td>	<td>Hepit</td></tr>
+							<tr class="locationMission"><td>Lares</td>	<td>Ishtar</td>		<td>Erpo</td>		<td>Augustus</td>	<td>Monolith</td>	<td>Exta</td>	<td>Cameria</td>	<td>Kokabiel</td>	<td>Dione</td>		<td>Cressida</td>	<td>Stofler</td>	<td>Larissa</td>	<td>Hieracon</td>	<td>Hydron</td>		<td>Garus</td>		<td>Naeglar</td>	<td>Mobile Defense</td>	<td>Marduk</td></tr>
+							<tr class="locationMission"><td>M Prime</td>	<td>Kiliken</td>	<td>Eurasia</td>	<td>Gradivus</td>	<td>Roche</td>		<td>Gabii</td>	<td>Carme</td>		<td>Larzac</td>		<td>Enceladus</td>	<td>Desdemona</td>	<td>Tycho</td>		<td>Nereid</td>		<td>Hydra</td>		<td>Kappa</td>		<td>Pago</td>		<td>Nimus</td>		<td>Sabotage</td>	<td>Mithra</td></tr>
+							<tr class="locationMission"><td>Odin</td>	<td>Linea</td>		<td>Everest</td>	<td>Hellas</td>		<td>Sharpless</td>	<td>Ker</td>	<td>Carpo</td>		<td>Morax</td>		<td>Helene</td>		<td>Ophelia</td>	<td>Zeipel</td>		<td>Neso</td>		<td>Minthe</td>		<td>Kelpie</td>		<td>Tamu</td>		<td>Oestrus</td>	<td>Survival</td>	<td>Mot</td></tr>
+							<tr class="locationMission"><td>Pantheon</td>	<td>Malva</td>		<td>Gaia</td>		<td>Kadesh</td>		<td>Shklovsky</td>	<td>Kiste</td>	<td>Elara</td>		<td>Naamah</td>		<td>Keeler</td>		<td>Puck</td>		<td></td>		<td>Proteus</td>	<td>Narcissus</td>	<td>Marid</td>		<td>Taveuni</td>	<td>Saxis</td>		<td></td>		<td>Oxomoco</td></tr>
+							<tr class="locationMission"><td>Suisei</td>	<td>Montes</td>		<td>Lith</td>		<td>Martialis</td>	<td>Skyresh</td>	<td>Lex</td>	<td>Galilea</td>	<td>Orias</td>		<td>Numa</td>		<td>Rosalind</td>	<td></td>		<td>Psamathe</td>	<td>Oceanum</td>	<td>Merrow</td>		<td></td>		<td>Solium</td>		<td></td>		<td>Stribog</td></tr>
+							<tr class="locationMission"><td>Terminus</td>	<td>Romula</td>		<td>Mantle</td>		<td>Olympus</td>	<td>Stickney</td>	<td>Ludi</td>	<td>Io</td>		<td>Ose</td>		<td>Pandora</td>	<td>Stephano</td>	<td></td>		<td>Salacia</td>	<td>Outer Terminus</td>	<td>Naga</td>		<td></td>		<td>Xini</td>		<td></td>		<td>Taranis</td></tr>
+							<tr class="locationMission"><td>Tolstoj</td>	<td>Tessera</td>	<td>Mariana</td>	<td>Spear</td>		<td>Zeugma</td>		<td>Nuovo</td>	<td>Metis</td>		<td>Paimon</td>		<td>Piscinas</td>	<td>Sycorax</td>	<td></td>		<td>Sao</td>		<td>Palus</td>		<td>Nakki</td>		<td></td>		<td>Zabala</td>		<td></td>		<td>Teshub</td></tr>
+							<tr class="locationMission"><td></td>		<td>Unda</td>		<td>Oro</td>		<td>Syrtis</td>		<td></td>		<td>Pallas</td>	<td>Sinai</td>		<td>Sorath</td>		<td>Rhea</td>		<td>Titania</td>	<td></td>		<td>Triton</td>		<td>Regna</td>		<td>Rusalka</td>	<td></td>		<td></td>		<td></td>		<td>Tiwaz</td></tr>
+							<tr class="locationMission"><td></td>		<td>V Prime</td>	<td>Pacific</td>	<td>Tharsis</td>	<td></td>		<td>Seimeni</td><td>Thebe</td>		<td>Valac</td>		<td>Telesto</td>	<td>Umbriel</td>	<td></td>		<td>Yursa</td>		<td>Sechura</td>	<td>Sangeru</td>	<td></td>		<td></td>		<td></td>		<td>Ukko</td></tr></tr>
+							<tr class="locationMission"><td></td>		<td>Venera</td>		<td>Tikal</td>		<td>Ultor</td>		<td></td>		<td>Thon</td>	<td>Themisto</td>	<td>Valefor</td>	<td>Tethys</td>		<td>Ur</td>		<td></td>		<td></td>		<td></td>		<td>Selkie</td>		<td></td>		<td></td>		<td></td>		<td></td>
+							<tr class="locationMission"><td></td>		<td></td>		<td></td>		<td>Vallis</td>		<td></td>		<td></td>	<td></td>		<td></td>		<td>Titan</td>		<td></td>		<td></td>		<td></td>		<td></td>		<td>Vodyanoi</td>	<td></td>		<td></td>		<td></td>		<td></td></tr>
+							<tr class="locationMission"><td></td>		<td></td>		<td></td>		<td>Wahiba</td>		<td></td>		<td></td>	<td></td>		<td></td>		<td></td>		<td></td>		<td></td>		<td></td>		<td></td>		<td>Yam</td>		<td></td>		<td></td>		<td></td>		<td></td></tr>
+							<tr class="locationMission"><td></td>		<td></td>		<td></td>		<td>War</td>		<td></td>		<td></td>	<td></td>		<td></td>		<td></td>		<td></td>		<td></td>		<td></td>		<td></td>		<td></td>		<td></td>		<td></td>		<td></td>		<td></td></tr>
+						</table>
+						<table>
+							<tr><td>Common 1:</td><td><input type="text" id="editObjet1" value="" placeHolder="Butin"/> :</td><td><input type="text" id="editPiece1" value="" placeHolder="Piece"/></td><td><input type="number" id="editDucats1" value="" placeHolder="0"/></td></tr>
+							<tr><td>Common 2:</td><td><input type="text" id="editObjet2" value="" placeHolder="Butin"/> :</td><td><input type="text" id="editPiece2" value="" placeHolder="Piece"/></td><td><input type="number" id="editDucats2" value="" placeHolder="0"/></td></tr>
+							<tr><td>Common 3:</td><td><input type="text" id="editObjet3" value="" placeHolder="Butin"/> :</td><td><input type="text" id="editPiece3" value="" placeHolder="Piece"/></td><td><input type="number" id="editDucats3" value="" placeHolder="0"/></td></tr>
+							<tr><td>Uncommon 1:</td><td><input type="text" id="editObjet4" value="" placeHolder="Butin"/> :</td><td><input type="text" id="editPiece4" value="" placeHolder="Piece"/></td><td><input type="number" id="editDucats4" value="" placeHolder="0"/></td></tr>
+							<tr><td>Uncommon 1:</td><td><input type="text" id="editObjet5" value="" placeHolder="Butin"/> :</td><td><input type="text" id="editPiece5" value="" placeHolder="Piece"/></td><td><input type="number" id="editDucats5" value="" placeHolder="0"/></td></tr>
+							<tr><td>Rare 1:</td><td><input type="text" id="editObjet6" value="" placeHolder="Butin"/> :</td><td><input type="text" id="editPiece6" value="" placeHolder="Piece"/></td><td><input type="number" id="editDucats6" value="" placeHolder="0"/></td></tr>
+						</table>
+						<input type="button" id="btnEditValider" value="Valider" /><input type="button" id="btnEditAnnuler" value="Annuler" />
+						</fieldset>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<div class="footer">
-		V0.2 Updated as of 24 October 2016. Inspired by <a href="https://forums.warframe.com/profile/1752888-ditto132/" target="_blank">Ditto132</a>
+		<!-- V0.2 Updated as of 24 October 2016. Inspired by <a href="https://forums.warframe.com/profile/1752888-ditto132/" target="_blank">Ditto132</a> -->
+		V0.2 Updated as of 24 October 2016. Inspired by <a href="https://forums.warframe.com/topic/697877-tool-fissure-tool-for-fissure-mission/" target="_blank">Ditto132</a>
 	</div>
 </body>
 <!-- Script -->
@@ -157,6 +234,7 @@
 	$("#Fissure .selRelique").change(reliqueChange);
 	$("#header").children(".btnOnglet").click(clicOnglet);
 	initChkOptions();
+	$("#filtreInventaire").val("");
 	inventaire = newInventaire();
 	if (autoSave)
 		loadInvLocal(true);
@@ -181,6 +259,8 @@
 	//$("#btnExcLocalLoad").click(btnLoadExcLocal);
 	$("#btnExcRaz").click(clearExc);
 
+	$("#filtreInventaire").on("keyup", saisieFiltreInventaire);
+	$("#filtreInventaire").on("change", saisieFiltreInventaire);
 	$("#tableInventaire").change(qteInventaireChange);
 	$("#btnInvFileSave").click(saveInvFile);
 	$("#btnInvFileLoad").click(btnInvFile);
@@ -191,13 +271,18 @@
 
 	$("#butinJ1, #butinJ2, #butinJ3, #butinJ4").click(choixButin);
 	$("#addButin").click(ajoutButin);
-	// $("#ereRecherche").change(ereRecherche);
+
+	$("#ereRecherche").val("");
+	$("#ereRecherche").change(ereRecherche);
 	// $("#saisieRecherche").change(saisieRecherche);
-	$("#btnLanceRech").click(recherche);
-	$("#btnVideRech").click(videRecherche);
+	// $("#btnLanceRech").click(recherche);
+	// $("#btnVideRech").click(videRecherche);
+	$("#saisieRecherche").val("");
+	$("#saisieRecherche").on("keyup", saisieRecherche);
+	$("#saisieRecherche").on("change", saisieRecherche);
 	recherche();
 </script>
 <!--
-V0.1 (27 September 2016)
+V0.3 (27 November 2016)
 -->
 </html>
